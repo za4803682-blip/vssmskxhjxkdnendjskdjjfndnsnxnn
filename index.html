@@ -1,310 +1,314 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="html-root">
+<html lang="en" dir="ltr" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Booksking - متجر أمازون العالمي الشامل</title>
+    <title id="page-title">Booksking Elite - The Ultimate Global Mega Store & Amazon Hub</title>
+    
+    <!-- مكتبة Firebase السحابية لإدارة البيانات والمديرين -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background 0.3s, color 0.3s; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; transition: background 0.3s ease, color 0.3s ease, border 0.3s ease; }
+        
+        /* نظام الألوان الأبيض والأسود النقي فقط (Monochrome Minimalist Boss Theme) */
         :root {
-            --bg-main: #f3f3f3;
-            --bg-card: #ffffff;
+            --bg-main: #ffffff;
+            --bg-card: #f9f9f9;
             --text-main: #111111;
-            --header-bg: #131921;
-            --accent-color: #febd69;
-            --btn-buy: #ffd814;
-            --btn-buy-hover: #f7ca00;
+            --text-muted: #666666;
+            --header-bg: #000000;
+            --header-text: #ffffff;
+            --border-color: #e0e0e0;
+            --btn-bg: #000000;
+            --btn-text: #ffffff;
+            --btn-hover: #333333;
+            --badge-bg: #111111;
+            --badge-text: #ffffff;
         }
+
         body.dark-mode {
-            --bg-main: #0f1111;
-            --bg-card: #1a1f24;
-            --text-main: #ffffff;
-            --header-bg: #0b0e11;
-            --accent-color: #febd69;
+            --bg-main: #0a0a0a;
+            --bg-card: #141414;
+            --text-main: #f3f3f3;
+            --text-muted: #a1a1a1;
+            --header-bg: #ffffff;
+            --header-text: #000000;
+            --border-color: #262626;
+            --btn-bg: #ffffff;
+            --btn-text: #000000;
+            --btn-hover: #e0e0e0;
+            --badge-bg: #ffffff;
+            --badge-text: #000000;
         }
-        body { background-color: var(--bg-main); color: var(--text-main); direction: rtl; text-align: right; line-height: 1.6; }
-        body.ltr { direction: ltr; text-align: left; }
 
-        header { background-color: var(--header-bg); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 1000; border-bottom: 3px solid var(--accent-color); }
-        .logo { font-size: 26px; font-weight: 800; color: var(--accent-color); display: flex; align-items: center; gap: 10px; }
+        body { background-color: var(--bg-main); color: var(--text-main); direction: ltr; text-align: left; line-height: 1.7; }
+        body.rtl-mode { direction: rtl; text-align: right; }
+
+        .top-ticker { background: var(--text-main); color: var(--bg-main); text-align: center; padding: 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; }
+
+        header { background-color: var(--header-bg); color: var(--header-text); padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; position: sticky; top: 0; z-index: 1000; border-bottom: 2px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1px; color: var(--header-text); cursor: pointer; display: flex; align-items: center; gap: 8px; }
         
-        nav ul { list-style: none; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-        nav ul li a { color: white; text-decoration: none; font-size: 15px; font-weight: 600; }
-        nav ul li a:hover { color: var(--accent-color); }
+        nav ul { list-style: none; display: flex; gap: 25px; align-items: center; flex-wrap: wrap; }
+        nav ul li a { color: var(--header-text); text-decoration: none; font-size: 14px; font-weight: 600; cursor: pointer; opacity: 0.85; }
+        nav ul li a:hover { opacity: 1; text-decoration: underline; }
 
-        .controls-bar { display: flex; gap: 15px; align-items: center; }
-        .controls-bar select, .controls-bar button { background-color: #232f3e; color: white; border: 1px solid var(--accent-color); padding: 8px 14px; border-radius: 6px; font-size: 14px; cursor: pointer; outline: none; font-weight: bold; }
-        .controls-bar button:hover { background-color: #37475f; }
+        .controls-panel { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .controls-panel select, .controls-panel button { background: transparent; color: var(--header-text); border: 1px solid var(--header-text); padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; outline: none; }
+        .controls-panel button:hover, .controls-panel select:hover { background: var(--header-text); color: var(--header-bg); }
 
-        .hero { background: linear-gradient(135deg, #131921, #232f3e); color: white; text-align: center; padding: 70px 20px; border-bottom: 4px solid var(--accent-color); }
-        .hero h1 { font-size: 36px; color: var(--accent-color); margin-bottom: 15px; font-weight: 900; }
-        .hero p { font-size: 17px; max-width: 800px; margin: 0 auto 25px auto; color: #cbd5e1; }
+        .boss-btn { background: #ff0000 !important; color: #fff !important; border: none !important; display: none; }
+        .boss-ads-banner { background: var(--bg-card); border: 2px dashed var(--text-main); padding: 20px; text-align: center; margin: 30px auto; max-width: 1400px; border-radius: 12px; display: none; }
 
-        .container { max-width: 1300px; margin: 40px auto; padding: 0 20px; }
-        .section-title { font-size: 26px; color: var(--text-main); margin-bottom: 25px; font-weight: 800; border-right: 5px solid var(--accent-color); padding-right: 12px; }
-        body.ltr .section-title { border-right: none; border-left: 5px solid var(--accent-color); padding-right: 0; padding-left: 12px; }
+        .hero-section { text-align: center; padding: 90px 20px; max-width: 1100px; margin: 0 auto; }
+        .hero-section h1 { font-size: 52px; font-weight: 900; letter-spacing: -2px; margin-bottom: 20px; }
+        .hero-section p { font-size: 18px; color: var(--text-muted); max-width: 800px; margin: 0 auto 35px auto; }
 
-        .amazon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
-        .amazon-card { background-color: var(--bg-card); border-radius: 10px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(0,0,0,0.1); }
-        .amazon-card img { width: 100%; height: 210px; object-fit: cover; border-radius: 6px; margin-bottom: 15px; }
-        .amazon-card h3 { font-size: 18px; margin-bottom: 10px; font-weight: 700; color: var(--text-main); }
-        .amazon-card p { font-size: 13px; color: #718096; margin-bottom: 15px; flex-grow: 1; }
-        .badge-amazon { background-color: #232f3e; color: #febd69; padding: 4px 8px; font-size: 11px; border-radius: 4px; display: inline-block; margin-bottom: 10px; font-weight: bold; width: fit-content; }
-        .price-tag { font-size: 18px; font-weight: bold; color: #b12704; margin-bottom: 15px; }
-        
-        .btn-buy { background-color: var(--btn-buy); color: #111; text-align: center; padding: 12px; text-decoration: none; font-weight: bold; border-radius: 8px; display: block; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn-buy:hover { background-color: var(--btn-buy-hover); }
+        .search-container { max-width: 700px; margin: 0 auto 40px auto; display: flex; gap: 10px; }
+        .search-container input { flex: 1; padding: 15px 20px; border-radius: 8px; border: 2px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-size: 16px; outline: none; }
+        .search-container button { padding: 0 25px; border-radius: 8px; background: var(--btn-bg); color: var(--btn-text); border: none; font-weight: bold; cursor: pointer; }
 
-        footer { background-color: var(--header-bg); color: white; text-align: center; padding: 30px 20px; margin-top: 60px; font-size: 14px; border-top: 3px solid var(--accent-color); }
-        footer p { color: #94a3b8; }
+        .categories-grid { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 50px; padding: 0 20px; }
+        .cat-chip { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 30px; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .cat-chip:hover, .cat-chip.active { background: var(--btn-bg); color: var(--btn-text); border-color: var(--btn-bg); }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 30px 80px 30px; }
+        .section-title { font-size: 24px; font-weight: 900; margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; letter-spacing: -0.5px; }
+
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        .product-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .product-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-color); }
+        .product-badge { background: var(--badge-bg); color: var(--badge-text); padding: 4px 10px; font-size: 11px; font-weight: 800; border-radius: 4px; display: inline-block; margin-bottom: 10px; width: fit-content; text-transform: uppercase; }
+        .product-card h3 { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+        .product-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 15px; flex-grow: 1; }
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .price { font-size: 18px; font-weight: 900; }
+        .btn-buy { background: var(--btn-bg); color: var(--btn-text); text-align: center; padding: 12px; border-radius: 6px; text-decoration: none; font-weight: 800; font-size: 14px; display: block; border: none; cursor: pointer; width: 100%; }
+        .btn-buy:hover { background: var(--btn-hover); }
+
+        /* نوافذ التحكم وتسجيل المدير */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(4px); }
+        .modal-box { background: var(--bg-main); border: 2px solid var(--text-main); padding: 40px; border-radius: 16px; width: 100%; max-width: 450px; position: relative; }
+        .modal-box h2 { font-size: 22px; font-weight: 900; margin-bottom: 20px; }
+        .modal-box input, .modal-box textarea, .modal-box select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-size: 14px; outline: none; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 22px; cursor: pointer; font-weight: bold; }
+
+        footer { background-color: var(--header-bg); color: var(--header-text); text-align: center; padding: 50px 20px; border-top: 2px solid var(--border-color); font-size: 14px; margin-top: 60px; }
+        footer p { opacity: 0.8; }
     </style>
 </head>
-<body class="dark-mode">
+<body>
+
+    <div class="top-ticker" data-i18n="top_ticker">⚡ BOOKSKING ELITE: The World's #1 Ultra-Fast Global Amazon Mega Hub & Digital Bookstore (100% Comprehensive Catalog)</div>
 
     <header>
-        <div class="logo">📦 Booksking Amazon Hub</div>
+        <div class="logo" onclick="window.scrollTo(0,0)">👑 Booksking Elite</div>
         <nav>
             <ul>
-                <li><a href="#home" data-i18n="nav_home">الرئيسية</a></li>
-                <li><a href="#books" data-i18n="nav_books">الكتب والمعارف</a></li>
-                <li><a href="#smart" data-i18n="nav_smart">الأجهزة الذكية</a></li>
-                <li><a href="#digital" data-i18n="nav_digital">الحلول الرقمية</a></li>
+                <li><a href="#home" data-i18n="nav_home">Home</a></li>
+                <li><a href="#electronics" data-i18n="nav_elec">Electronics & Gaming</a></li>
+                <li><a href="#appliances" data-i18n="nav_app">Home Appliances</a></li>
+                <li><a href="#books" data-i18n="nav_books">Books & PDFs</a></li>
+                <li><a onclick="openAuthModal()" style="cursor:pointer;" data-i18n="nav_boss">Boss Portal</a></li>
             </ul>
         </nav>
-        <div class="controls-bar">
-            <select id="languageSelect" onchange="changeLanguage(this.value)">
+        <div class="controls-panel">
+            <select id="langSelector" onchange="switchLanguage(this.value)">
+                <option value="en" selected>English</option>
                 <option value="ar">العربية</option>
-                <option value="en">English</option>
                 <option value="fr">Français</option>
                 <option value="de">Deutsch</option>
                 <option value="es">Español</option>
+                <option value="ru">Русский</option>
             </select>
-            <button onclick="toggleTheme()" data-i18n="theme_btn">🌙 وضع الإضاءة</button>
+            <button onclick="toggleTheme()" data-i18n="theme_btn">🌓 Theme</button>
+            <button class="boss-btn" id="bossAddBtn" onclick="openBossModal()">⚙️ Add Product / PDF</button>
         </div>
     </header>
 
-    <section class="hero" id="home">
-        <h1 data-i18n="hero_title">متجر أمازون الشامل والمرجعي - Booksking</h1>
-        <p data-i18n="hero_desc">منصة تجارية ضخمة تعرض أرقى المنتجات العالمية والكتب والحلول التقنية المرتبطة مباشرة مع أمازون لضمان أعلى جودة وأسرع شحن وتوصيل عالمي.</p>
+    <!-- لوحة إعلانات المدير الخاصة -->
+    <div class="boss-ads-banner" id="bossAdsBanner">
+        <h3 style="margin-bottom: 8px;" data-i18n="boss_banner_title">📢 Boss Exclusive Announcements & Promoted Products</h3>
+        <p id="bossCustomAdText" style="color:var(--text-muted); font-size:14px;" data-i18n="boss_banner_desc">Welcome Boss! You have full control over global promotions, daily automated Amazon sync, and exclusive inventory.</p>
+    </div>
+
+    <section class="hero-section" id="home">
+        <h1 data-i18n="hero_title">Unlimited Amazon Catalog. Zero Friction.</h1>
+        <p data-i18n="hero_desc">Explore 100% of Amazon products instantly with superior speed, advanced monochromatic elegance, direct global links, and daily automated updates.</p>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search 100% of Amazon products, PlayStations, electronics, books, PDFs..." onkeyup="filterProducts()">
+            <button onclick="filterProducts()" data-i18n="search_btn">Search</button>
+        </div>
+
+        <div class="categories-grid">
+            <button class="cat-chip active" onclick="filterCat('all')" data-i18n="cat_all">🌟 All 100% Amazon</button>
+            <button class="cat-chip" onclick="filterCat('elec')" data-i18n="cat_elec">⚡ Electronics & Gaming</button>
+            <button class="cat-chip" onclick="filterCat('appliances')" data-i18n="cat_app">🏠 Home & Appliances</button>
+            <button class="cat-chip" onclick="filterCat('books')" data-i18n="cat_books">📚 Books & PDF Guides</button>
+        </div>
     </section>
 
-    <div class="container">
-        <h2 class="section-title" data-i18n="sec_books">أبرز الكتب والإصدارات العالمية</h2>
-        <div class="amazon-grid" id="books">
-            <!-- منتج 1 -->
-            <div class="amazon-card">
-                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500" alt="Book">
+    <div class="container" id="dynamicContainer">
+        
+        <!-- قسم الإلكترونيات والبلايستيشن والألعاب -->
+        <div class="section-title" id="electronics" data-i18n="sec_elec">Electronics, Gaming & Consoles</div>
+        <div class="products-grid">
+            <div class="product-card" data-category="elec">
+                <img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=500" alt="PlayStation 5">
                 <div>
-                    <span class="badge-amazon">Amazon Verified Choice</span>
-                    <h3 data-i18n="b1_title">موسوعة الذكاء الاصطناعي والبرمجة</h3>
-                    <p data-i18n="b1_desc">دليل شامل ومتقدم لفهم تقنيات المستقبل وبناء خوارزميات العصر الحديث.</p>
+                    <span class="product-badge">Amazon Best Seller</span>
+                    <h3>Next-Gen Gaming Console (PS5 Pro Edition)</h3>
+                    <p>Ultra-high speed SSD, ray tracing support, 4K gaming and 3D audio technology.</p>
                 </div>
                 <div>
-                    <div class="price-tag">$45.99 - متوفر في أمازون</div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_text">شراء من أمازون (Amazon)</a>
-                </div>
-            </div>
-            <!-- منتج 2 -->
-            <div class="amazon-card">
-                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500" alt="Book">
-                <div>
-                    <span class="badge-amazon">Best Seller</span>
-                    <h3 data-i18n="b2_title">فن الإدارة والقيادة الرقمية</h3>
-                    <p data-i18n="b2_desc">أسرار بناء وإدارة الفرق العالمية وتحقيق أعلى معدلات الإنتاجية.</p>
-                </div>
-                <div>
-                    <div class="price-tag">$29.99 - متوفر في أمازون</div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_text">شراء من أمازون (Amazon)</a>
+                    <div class="price-row"><span class="price">$499.99</span></div>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
                 </div>
             </div>
-            <!-- منتج 3 -->
-            <div class="amazon-card">
-                <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500" alt="Book">
+
+            <div class="product-card" data-category="elec">
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" alt="Headphones">
                 <div>
-                    <span class="badge-amazon">Top Rated</span>
-                    <h3 data-i18n="b3_title">الروايات العالمية الخالدة (مجموعة)</h3>
-                    <p data-i18n="b3_desc">أرقى الروايات الفاخرة الحائزة على جوائز الأدب العالمي الكبرى.</p>
+                    <span class="product-badge">Amazon's Choice</span>
+                    <h3>Wireless Noise-Canceling Studio Headphones</h3>
+                    <p>Premium acoustic sound, 40-hour battery life, and supreme ergonomic comfort.</p>
                 </div>
                 <div>
-                    <div class="price-tag">$59.00 - متوفر في أمازون</div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_text">شراء من أمازون (Amazon)</a>
+                    <div class="price-row"><span class="price">$129.99</span></div>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="elec">
+                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" alt="Smart Watch">
+                <div>
+                    <span class="product-badge">Top Rated</span>
+                    <h3>Minimalist Smart Fitness Watch & Tracker</h3>
+                    <p>Heart rate monitor, GPS tracking, waterproof build and retina OLED display.</p>
+                </div>
+                <div>
+                    <div class="price-row"><span class="price">$199.00</span></div>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
                 </div>
             </div>
         </div>
 
-        <h2 class="section-title" style="margin-top: 50px;" data-i18n="sec_smart">الأجهزة التقنية والمنتجات الذكية</h2>
-        <div class="amazon-grid" id="smart">
-            <!-- منتج 4 -->
-            <div class="amazon-card">
-                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" alt="Tech">
+        <!-- قسم الأجهزة المنزلية الثلاجات والغسالات والسخانات -->
+        <div class="section-title" id="appliances" data-i18n="sec_app">Home Appliances (Refrigerators, Heaters & Washers)</div>
+        <div class="products-grid">
+            <div class="product-card" data-category="appliances">
+                <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500" alt="Refrigerator">
                 <div>
-                    <span class="badge-amazon">Amazon Choice</span>
-                    <h3 data-i18n="s1_title">سماعات لاسلكية فائقة العزل</h3>
-                    <p data-i18n="s1_desc">صوت نقي، بطارية تدوم طويلاً، وتصميم مريح للعمل والاستخدام الطويل.</p>
+                    <span class="product-badge">Energy Efficient A++</span>
+                    <h3>Smart Double-Door Refrigerator & Freezer</h3>
+                    <p>Inverter compressor, digital temperature control, and spacious frost-free storage.</p>
                 </div>
                 <div>
-                    <div class="price-tag">$120.50 - متوفر في أمازون</div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_text">شراء من أمازون (Amazon)</a>
-                </div>
-            </div>
-            <!-- منتج 5 -->
-            <div class="amazon-card">
-                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" alt="Tech">
-                <div>
-                    <span class="badge-amazon">Prime Delivery</span>
-                    <h3 data-i18n="s2_title">ساعة ذكية رياضية متطورة</h3>
-                    <p data-i18n="s2_desc">متابعة الحيوية، قياس نبضات القلب، وتتبع الأنشطة اليومية بدقة عالية.</p>
-                </div>
-                <div>
-                    <div class="price-tag">$89.99 - متوفر في أمازون</div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_text">شراء من أمازون (Amazon)</a>
+                    <div class="price-row"><span class="price">$899.00</span></div>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
                 </div>
             </div>
-            <!-- منتج 6 -->
-            <div class="amazon-card">
-                <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=500" alt="Tech">
+
+            <div class="product-card" data-category="appliances">
+                <img src="https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=500" alt="Washing Machine">
                 <div>
-                    <span class="badge-amazon">Best Deal</span>
-                    <h3 data-i18n="s3_title">كاميرا تصوير رقمية احترافية</h3>
-                    <p data-i18n="s3_desc">دقة عالية جداً لالتقاط أفضل اللحظات والمناظر الطبيعية والفيديوهات.</p>
+                    <span class="product-badge">Best Seller</span>
+                    <h3>Automatic Front-Load Washing Machine</h3>
+                    <p>Steam wash technology, 1400 RPM spin speed, and quiet inverter direct drive.</p>
                 </div>
                 <div>
-                    <div class="price-tag">$450.00 - متوفر في أمازون</div>
-                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_text">شراء من أمازون (Amazon)</a>
+                    <div class="price-row"><span class="price">$549.00</span></div>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
                 </div>
             </div>
+        </div>
+
+        <!-- قسم الكتب والـ PDFs المطبوعة والرقمية -->
+        <div class="section-title" id="books" data-i18n="sec_books">Books, Literature & PDF Guides</div>
+        <div class="products-grid">
+            <div class="product-card" data-category="books">
+                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500" alt="Book">
+                <div>
+                    <span class="product-badge">Kindle & PDF</span>
+                    <h3>Advanced Global Business Strategy & Leadership</h3>
+                    <p>Comprehensive masterclass manual for scaling remote digital enterprises successfully.</p>
+                </div>
+                <div>
+                    <div class="price-row"><span class="price">$29.99</span></div>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="books">
+                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500" alt="PDF Guide">
+                <div>
+                    <span class="product-badge">Instant Download PDF</span>
+                    <h3>Modern AI & Machine Learning Engineering Guide</h3>
+                    <p>Deep neural networks, Python algorithms, and practical deployment blueprints.</p>
+                </div>
+                <div>
+                    <div class="price-row"><span class="price">$19.99</span></div>
+                    <a href="https://www.amazon.com" target="_blank" class="btn-buy" data-i18n="buy_btn">Buy on Amazon</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- نافذة تسجيل دخول المدير (Boss Login Modal) -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+            <h2 data-i18n="modal_auth_title">👑 Boss Portal Secure Login</h2>
+            <input type="email" id="bossEmail" placeholder="Enter Boss Email...">
+            <input type="password" id="bossPass" placeholder="Enter Secure Password...">
+            <button class="btn-buy" onclick="verifyBossLogin()" data-i18n="modal_auth_btn">Authenticate as Boss</button>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة منتج أو PDF جديد للمدير -->
+    <div class="modal-overlay" id="bossModal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeBossModal()">&times;</span>
+            <h2 data-i18n="modal_boss_title">⚙️ Add Product, Item or PDF</h2>
+            <input type="text" id="newTitle" placeholder="Item Title...">
+            <input type="text" id="newImg" placeholder="Image URL (Unsplash/Amazon)...">
+            <input type="text" id="newPrice" placeholder="Price (e.g. $49.99)...">
+            <textarea id="newDesc" rows="3" placeholder="Description..."></textarea>
+            <button class="btn-buy" onclick="publishBossItem()" data-i18n="modal_boss_publish">Publish Globally Now</button>
         </div>
     </div>
 
     <footer>
-        <p data-i18n="footer_text">جميع الحقوق محفوظة © 2026 منصة Booksking. مرخصة للشراكة التسويقية مع أمازون (Amazon Associates).</p>
+        <p data-i18n="footer_text">All Rights Reserved © 2026 Booksking Elite Platform. Official Global Amazon Associates Partner & Automated Hub.</p>
     </footer>
 
     <script>
-        const translations = {
-            ar: {
-                page_title: "Booksking - متجر أمازون العالمي الشامل",
-                nav_home: "الرئيسية", nav_books: "الكتب والمعارف", nav_smart: "الأجهزة الذكية", nav_digital: "الحلول الرقمية",
-                theme_btn: "☀️ وضع الإضاءة",
-                hero_title: "متجر أمازون الشامل والمرجعي - Booksking",
-                hero_desc: "منصة تجارية ضخمة تعرض أرقى المنتجات العالمية والكتب والحلول التقنية المرتبطة مباشرة مع أمازون لضمان أعلى جودة وأسرع شحن وتوصيل عالمي.",
-                sec_books: "أبرز الكتب والإصدارات العالمية",
-                b1_title: "موسوعة الذكاء الاصطناعي والبرمجة", b1_desc: "دليل شامل ومتقدم لفهم تقنيات المستقبل وبناء خوارزميات العصر الحديث.",
-                b2_title: "فن الإدارة والقيادة الرقمية", b2_desc: "أسرار بناء وإدارة الفرق العالمية وتحقيق أعلى معدلات الإنتاجية.",
-                b3_title: "الروايات العالمية الخالدة (مجموعة)", b3_desc: "أرقى الروايات الفاخرة الحائزة على جوائز الأدب العالمي الكبرى.",
-                sec_smart: "الأجهزة التقنية والمنتجات الذكية",
-                s1_title: "سماعات لاسلكية فائقة العزل", s1_desc: "صوت نقي، بطارية تدوم طويلاً، وتصميم مريح للعمل والاستخدام الطويل.",
-                s2_title: "ساعة ذكية رياضية متطورة", s2_desc: "متابعة الحيوية، قياس نبضات القلب، وتتبع الأنشطة اليومية بدقة عالية.",
-                s3_title: "كاميرا تصوير رقمية احترافية", s3_desc: "دقة عالية جداً لالتقاط أفضل اللحظات والمناظر الطبيعية والفيديوهات.",
-                buy_text: "شراء من أمازون (Amazon)",
-                footer_text: "جميع الحقوق محفوظة © 2026 منصة Booksking. مرخصة للشراكة التسويقية مع أمازون (Amazon Associates)."
-            },
-            en: {
-                page_title: "Booksking - Comprehensive Global Amazon Store",
-                nav_home: "Home", nav_books: "Books & Knowledge", nav_smart: "Smart Devices", nav_digital: "Digital Solutions",
-                theme_btn: "☀️ Light Mode",
-                hero_title: "Comprehensive Amazon Reference Store - Booksking",
-                hero_desc: "A massive commercial platform featuring premium global products, books, and tech solutions directly linked with Amazon.",
-                sec_books: "Featured Global Books & Publications",
-                b1_title: "AI and Programming Encyclopedia", b1_desc: "Comprehensive and advanced guide to understanding future tech.",
-                b2_title: "The Art of Digital Management", b2_desc: "Secrets of building and managing global teams.",
-                b3_title: "Timeless Global Novels (Collection)", b3_desc: "Luxurious novels winning major literature awards.",
-                sec_smart: "Tech Devices & Smart Products",
-                s1_title: "Super Noise-Canceling Wireless Earphones", s1_desc: "Pure sound, long-lasting battery, and comfortable design.",
-                s2_title: "Advanced Sports Smartwatch", s2_desc: "Track vitality, heart rate, and daily activities accurately.",
-                s3_title: "Professional Digital Camera", s3_desc: "High resolution for capturing the best moments and videos.",
-                buy_text: "Buy on Amazon",
-                footer_text: "All Rights Reserved © 2026 Booksking Platform. Licensed with Amazon Associates."
-            },
-            fr: {
-                page_title: "Booksking - Boutique Amazon Globale",
-                nav_home: "Accueil", nav_books: "Livres", nav_smart: "Appareils Intelligents", nav_digital: "Solutions",
-                theme_btn: "☀️ Mode Clair",
-                hero_title: "Boutique de Référence Amazon - Booksking",
-                hero_desc: "Une plateforme commerciale majeure présentant des produits mondiaux et des livres liés directement à Amazon.",
-                sec_books: "Livres Mondiaux en Vedette",
-                b1_title: "Encyclopédie de l'IA et de la Programmation", b1_desc: "Guide complet des technologies du futur.",
-                b2_title: "L'Art de la Gestion Numérique", b2_desc: "Secrets de gestion d'équipes mondiales.",
-                b3_title: "Romans Mondiaux Intemporels", b3_desc: "Romans de luxe primés.",
-                sec_smart: "Appareils et Produits Intelligents",
-                s1_title: "Écouteurs Sans Fil à Annulation de Bruit", s1_desc: "Son pur, longue autonomie et design confortable.",
-                s2_title: "Montre Connectée Sportive Avancée", s2_desc: "Suivi de la vitalité et de l'activité quotidienne.",
-                s3_title: "Appareil Photo Numérique Professionnel", s3_desc: "Haute résolution pour capturer les meilleurs moments.",
-                buy_text: "Acheter sur Amazon",
-                footer_text: "Tous droits réservés © 2026 Booksking. Partenaire Amazon."
-            },
-            de: {
-                page_title: "Booksking - Umfassender Globaler Amazon-Store",
-                nav_home: "Startseite", nav_books: "Bücher", nav_smart: "Smart-Geräte", nav_digital: "Digitale Lösungen",
-                theme_btn: "☀️ Hellmodus",
-                hero_title: "Umfassender Amazon-Referenzshop - Booksking",
-                hero_desc: "Eine massive Handelsplattform mit globalen Produkten und Büchern, direkt mit Amazon verknüpft.",
-                sec_books: "Ausgewählte Globale Bücher",
-                b1_title: "KI- und Programmier-Enzyklopädie", b1_desc: "Umfassender Leitfaden zum Verständnis zukünftiger Technologien.",
-                b2_title: "Die Kunst des digitalen Managements", b2_desc: "Geheimnisse des Aufbaus globaler Teams.",
-                b3_title: "Zeitlose Weltromane", b3_desc: "Luxuriöse Romane mit großen Literaturpreisen.",
-                sec_smart: "Technische Geräte & Smart Produkte",
-                s1_title: "Kabellose Kopfhörer mit Rauschunterdrückung", s1_desc: "Reiner Klang, langlebiger Akku.",
-                s2_title: "Fortschrittliche Sport-Smartwatch", s2_desc: "Vitalität und tägliche Aktivitäten genau verfolgen.",
-                s3_title: "Professionelle Digitalkamera", s3_desc: "Sehr hohe Auflösung für beste Momente.",
-                buy_text: "Auf Amazon kaufen",
-                footer_text: "Alle Rechte vorbehalten © 2026 Booksking. Amazon Associates Partner."
-            },
-            es: {
-                page_title: "Booksking - Tienda Global de Amazon",
-                nav_home: "Inicio", nav_books: "Libros", nav_smart: "Dispositivos Inteligentes", nav_digital: "Soluciones",
-                theme_btn: "☀️ Modo Claro",
-                hero_title: "Tienda de Referencia de Amazon - Booksking",
-                hero_desc: "Una plataforma comercial masiva que ofrece productos globales y libros vinculados directamente con Amazon.",
-                sec_books: "Libros Globales Destacados",
-                b1_title: "Enciclopedia de IA y Programación", b1_desc: "Guía completa para comprender las tecnologías del futuro.",
-                b2_title: "El Arte de la Gestión Digital", b2_desc: "Secretos para construir y gestionar equipos globales.",
-                b3_title: "Novelas Globales Inmortales", b3_desc: "Novelas de lujo galardonadas.",
-                sec_smart: "Dispositivos y Productos Inteligentes",
-                s1_title: "Auriculares Inalámbricos con Cancelación de Ruido", s1_desc: "Sonido puro y batería de larga duración.",
-                s2_title: "Reloj Inteligente Deportivo", s2_desc: "Monitoreo preciso de la vitalidad y actividad.",
-                s3_title: "Cámara Digital Profesional", s3_desc: "Alta resolución para capturar los mejores momentos.",
-                buy_text: "Comprar en Amazon",
-                footer_text: "Todos los derechos reservados © 2026 Booksking. Afiliado de Amazon."
-            }
+        // إعدادات Firebase السحابية
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummyKeyForBooksking12345",
+            authDomain: "booksking-elite.firebaseapp.com",
+            projectId: "booksking-elite"
         };
-
-        function changeLanguage(lang) {
-            const root = document.getElementById('html-root');
-            if (lang === 'ar') {
-                root.setAttribute('dir', 'rtl');
-                root.classList.remove('ltr');
-            } else {
-                root.setAttribute('dir', 'ltr');
-                root.classList.add('ltr');
-            }
-
-            const elements = document.querySelectorAll('[data-i18n]');
-            elements.forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (translations[lang] && translations[lang][key]) {
-                    if (el.tagName === 'TITLE') {
-                        document.title = translations[lang][key];
-                    } else {
-                        el.textContent = translations[lang][key];
-                    }
-                }
-            });
-            localStorage.setItem('booksking_lang', lang);
+        try {
+            firebase.initializeApp(firebaseConfig);
+            var db = firebase.firestore();
+        } catch(e) {
+            console.log("Cloud simulation mode active.");
         }
 
-        function toggleTheme() {
-            const body = document.body;
-            body.classList.toggle('dark-mode');
-            const isDark = body.classList.contains('dark-mode');
-            localStorage.setItem('booksking_theme', isDark ? 'dark' : 'light');
-        }
-
-        window.onload = function() {
-            const savedLang = localStorage.getItem('booksking_lang') || 'ar';
-            document.getElementById('languageSelect').value = savedLang;
-            changeLanguage(savedLang);
-
-            const savedTheme = localStorage.getItem('booksking_theme');
-            if (savedTheme === 'light') {
-                document.body.class
+        const translations = {
+            en: {
+                page_title: "Booksking Elite - The Ultimate Global Mega Store & Amazon Hub",
+                top_ticker: "⚡ BOOKSKING ELITE: The World's #1 Ultra-Fast Global Amazon Mega Hub & Digital Bookstore (100% Comprehensive Catalog)",
+                nav_home: "Home", nav_elec: "Electronics & Gaming", nav_app: "Home Appliances", nav_books: "Books & PDFs", nav_boss: "Boss Portal",
+                theme_btn: "🌓 Theme", boss_banner_title: "📢 Boss Exclusive Announcements & Promoted Products",
+                boss_banner_desc: "Welcome Boss! You have full control over global promotions, daily automated Amazon sync, and exclusive inventory.",
+                hero_title: "Unlimited Amazon Catalog. Zero Friction.",
+                hero_desc: "Explore 100% of Amazon products instantly with superior speed, advanced monochromatic elegance, direct global links, and daily automated updates.",
+                search_btn: "Search",
+                cat_all: "🌟 All 100% Amazon", cat_elec: "⚡ Electronics & Gaming", cat_app: "🏠 Home & Appliances", cat_books: "📚 Books & PDF Guides",
+                s
