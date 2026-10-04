@@ -1,30 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Mascarillas Online</title>
-    <meta charset="utf-8">
-    <link rel="icon" type="image/png" sizes="96x96" href="../static/favicon.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Envíos en un día. Selección de las mejores marcas. Mira nuestras ofertas!">
-    <meta name="og:title" property="og:title" content="Mascarillas Online. Envíos en un día. Selección de las mejores marcas. Mira nuestras ofertas!">
-    <meta name="google-site-verification" content="75XjbI_TYb-P4zLa5aC6QGP7HbxcOWNrnweuvmTVIDU" />
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booksking - عالم المعرفة والابتكار</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f9f9fb; color: #333; direction: rtl; text-align: right; line-height: 1.6; }
+        header { background-color: #131921; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .logo { font-size: 22px; font-weight: bold; color: #febd69; }
+        nav ul { list-style: none; display: flex; gap: 20px; }
+        nav ul li a { color: white; text-decoration: none; font-size: 14px; transition: color 0.3s; }
+        nav ul li a:hover { color: #febd69; }
+        .hero { background: linear-gradient(135deg, #232f3e, #131921); color: white; text-align: center; padding: 60px 20px; }
+        .hero h1 { font-size: 32px; color: #febd69; margin-bottom: 15px; }
+        .hero p { font-size: 16px; max-width: 700px; margin: 0 auto 25px auto; color: #ccc; }
+        .btn-group { display: flex; justify-content: center; gap: 15px; }
+        .btn { background-color: #ffd814; color: #111; padding: 12px 25px; text-decoration: none; font-weight: bold; border-radius: 4px; transition: background 0.3s; }
+        .btn:hover { background-color: #f7ca00; }
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        .section-title { text-align: center; margin-bottom: 30px; font-size: 24px; color: #131921; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid #febd69; }
+        .card h3 { font-size: 18px; margin-bottom: 10px; color: #111; }
+        .card p { font-size: 13px; color: #666; }
+        .partner-section { background-color: #fff; border: 2px dashed #febd69; border-radius: 8px; padding: 40px; text-align: center; margin-top: 40px; }
+        .partner-section h2 { margin-bottom: 15px; color: #131921; }
+        .partner-section p { color: #666; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        footer { background-color: #131921; color: white; text-align: center; padding: 20px; margin-top: 50px; font-size: 13px; }
+    </style>
+</head>
+<body>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
-    <link rel="stylesheet" href="fonts/icomoon/style.css">
+    <header>
+        <div class="logo">Booksking</div>
+        <nav>
+            <ul>
+                <li><a href="#home">الرئيسية</a></li>
+                <li><a href="#categories">الأقسام</a></li>
+                <li><a href="#partner">شراكة أمازون</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
-    <link rel="stylesheet" href="css/jquery-ui.css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/owl.theme.default.min.css">
-    <link rel="stylesheet" href="css/aos.css">
-    <link rel="stylesheet" href="css/style.css">
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+    <section class="hero" id="home">
+        <h1>عالم المعرفة والابتكار بين يديك</h1>
+        <p>منصة رقمية متكاملة تقدم أرقى الكتب العالمية، المنتجات الذكية المختارة، والأجهزة والحلول التقنية الموثوقة بالتعاون مع كبرى المنصات العالمية.</p>
+        <div class="btn-group">
+            <a href="#categories" class="btn">استكشف الأقسام</a>
+            <a href="#partner" class="btn" style="background-color: #ffa41c; color: white;">شريك أمازون المعتمد</a>
+        </div>
+    </section>
+
+    <div class="container" id="categories">
+        <h2 class="section-title">أقسام المنصة الفاخرة</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>الكتب والإصدارات</h3>
+                <p>أحدث الكتب العالمية، الكتب الأكثر مبيعاً، والروايات الفاخرة الورقية والرقمية.</p>
+            </div>
+            <div class="card">
+                <h3>المنتجات الذكية</h3>
+                <p>أدوات ذكية وملحقات تقنية عالية الجودة مصممة لتسهيل وتطوير حياتك اليومية.</p>
+            </div>
+            <div class="card">
+                <h3>الحلول الرقمية</h3>
+                <p>برامج متخصصة، كتب إلكترونية، واشتراكات تعليمية معرفية متكاملة.</p>
+            </div>
+            <div class="card">
+                <h3>الوسائط المتعددة</h3>
+                <p>مجموعات موسيقية وثائقية نادرة، وإصدارات فاخرة على أحدث الوسائط الرقمية.</p>
+            </div>
+        </div>
+
+        <div class="partner-section" id="partner">
+            <span>شراكة استراتيجية موثوقة</span>
+            <h2>تسوق بضمان وأمان عبر أمازون</h2>
+            <p>من خلال شراكتنا الاستراتيجية مع شركة أمازون العالمية، نضمن لك تجربة تسوق استثنائية تجمع بين الفخامة، الموثوقية، وسرعة الشحن والتوصيل لجميع المنتجات المختارة بعناية.</p>
+            <!-- ضع رابط التابع الخاص بك هنا بدلاً من amazon.com -->
+            <a href="https://www.amazon.com" target="_blank" class="btn" style="background-color: #ffd814;">تصفح منتجات أمازون الآن</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>جميع الحقوق محفوظة © 2026 منصة Booksking. عالم المعرفة والابتكار.</p>
+    </footer>
+
+</body>
 </html>
+
